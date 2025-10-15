@@ -7,14 +7,14 @@
     <style> 
         :root { 
             /* 顏色變數 */ 
-            --color-edm: #e76f51;  /* EDM */ 
-            --color-list: #f4a261;  /* 榜單 */ 
-            --color-instagram: #264653; /* Instagram */ 
-            --color-branch: #2a9d8f;  /* 鵬展分校 */ 
-            --color-monitor: #219ebc;  /* 監視系統 */ 
-             
+            --color-edm: #e76f51; 
+            --color-list: #f4a261; 
+            --color-instagram: #264653; 
+            --color-branch: #2a9d8f; 
+            --color-monitor: #219ebc; 
+            
             --color-home: #808080; 
-             
+            
             --text-light: #fff; 
             --text-dark: #333; 
             --nav-height: 60px; /* 導覽按鈕統一高度 */ 
@@ -25,31 +25,38 @@
         body { 
             margin: 0; 
             font-family: Arial, sans-serif; 
-            overflow: hidden;  
+            background-color: #f0f0f0; 
+            line-height: 1.6;
         } 
 
-        /* 頁首 */ 
-        .site-header { 
-            position: fixed;  
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            z-index: 1000;  
-            transition: height 0.5s ease; 
-             
-            display: flex; 
-            flex-direction: column; 
-        } 
+        .site-content {
+            padding-top: 5vh; 
+            padding-bottom: 100px; 
+        }
 
-        .site-header.is-folded { 
-            height: var(--nav-height);  
-        } 
+        /* 浮動模組容器 */
+        .floating-module {
+            width: 90vw; 
+            max-width: 1000px; 
+            height: 80vh; 
+            max-height: 700px; 
+            margin: 0 auto; 
+            position: relative; 
+            overflow: hidden; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); 
+            background-color: #fff; 
+            margin-bottom: 80px; 
+        }
 
-        .hero-section { 
-            height: calc(100vh - var(--nav-height));  
-            flex-shrink: 0;  
-             
-            background-image: url('封面.jpg');  
+        /* 浮動視窗封面 (最底層) */ 
+        .module-hero-section { 
+            height: 100%; 
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-image: url('封面.jpg'); 
             background-size: cover; 
             background-position: center; 
             display: flex; 
@@ -57,13 +64,7 @@
             align-items: center; 
             color: var(--text-light); 
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); 
-            position: relative;  
-            transition: opacity 0.5s ease, height 0.5s ease;  
-        } 
-
-        .site-header.is-folded .hero-section { 
-            opacity: 0; 
-            height: 0;  
+            z-index: 10; 
         } 
 
         .main-title { 
@@ -71,20 +72,20 @@
             font-weight: bold; 
             letter-spacing: 5px; 
         } 
-         
+        
+        /* **[導覽按鈕]** 初始在底部 */
         .quick-links { 
-            flex-shrink: 0;  
+            flex-shrink: 0; 
             height: var(--nav-height); 
             display: flex; 
             width: 100%; 
-            position: relative;  
-            z-index: 10;  
-             
-
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5); 
+            position: absolute; 
+            bottom: 0; 
+            left: 0;
+            z-index: 1000; 
+            box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3); 
         } 
-         
-        /* 導覽按鈕樣式 */ 
+        
         .quick-link-btn { 
             display: flex; 
             justify-content: center; 
@@ -92,299 +93,330 @@
             color: var(--text-light); 
             font-weight: bold; 
             cursor: pointer; 
-            transition: background-color 0.3s ease;  
+            /* **[關鍵修正]** 將 transform 過渡時間設長一點，讓抬升動畫更平滑 */
+            transition: transform 0.6s ease-out, background-color 0.3s ease; 
             position: relative; 
-        } 
-         
-        /* 被選中的導覽按鈕，只有左右兩側的陰影 */ 
-        .quick-link-btn.is-active-nav { 
-            box-shadow:  
-                -3px 0 10px rgba(0, 0, 0, 0.6), /* 左側陰影 */ 
-                3px 0 10px rgba(0, 0, 0, 0.6);  /* 右側陰影 */ 
-            z-index: 11;  
+            text-decoration: none; 
+            background-color: var(--color-home); 
         } 
 
-
-        /*其餘導覽按鈕樣式 */ 
+        /* 修正：為每個按鈕添加背景色 */
+        .btn-edm { background-color: var(--color-edm); }
+        .btn-list { background-color: var(--color-list); }
+        .btn-insta { background-color: var(--color-instagram); }
+        .btn-branch { background-color: var(--color-branch); }
+        .btn-monitor { background-color: var(--color-monitor); }
+        
         .quick-link-btn:not(.btn-home) { 
-            flex-grow: 1;  
-            transform: skewX(-15deg);  
-            margin-right: -10px;  
+            flex-grow: 1; 
+            transform: skewX(-15deg); 
+            margin-right: -10px; 
             padding-right: 15px; 
         } 
 
         .quick-link-btn:not(.btn-home) > span { 
-            transform: skewX(15deg);  
+            transform: skewX(15deg); 
             display: block; 
         } 
-
-        .btn-edm { background-color: var(--color-edm); } 
-        .btn-list { background-color: var(--color-list); } 
-        .btn-insta { background-color: var(--color-instagram); } 
-        .btn-branch { background-color: var(--color-branch); } 
-        .btn-monitor {  
-            background-color: var(--color-monitor);  
-            margin-right: 0;  
-        } 
-         
-        .quick-link-btn:hover {  
-            filter: brightness(1.2);  
-        } 
-
+        
         .btn-home { 
-            flex-grow: 0;  
-            width: var(--nav-height);  
-            background-color: var(--color-home);  
-            margin-left: 1px;  
-        } 
-        .btn-home img { 
-            height: 70%;  
-            width: 70%; 
-            object-fit: contain; 
-        } 
-
-
-        /*堆疊式標籤頁區域*/ 
-        .tab-panel.edm { background-color: var(--color-edm); } 
-        .tab-panel.list { background-color: var(--color-list); } 
-        .tab-panel.insta { background-color: var(--color-instagram); } 
-        .tab-panel.branch { background-color: var(--color-branch); } 
-        .tab-panel.monitor { background-color: var(--color-monitor); } 
-
-        .stacked-tabs-container { 
-            position: fixed;  
-            top: 0;  
-            width: 100%; 
-            height: 100vh;  
-            overflow: hidden;  
-            transform: translateY(var(--nav-height)); 
-            transition: transform 0.5s ease; 
-            z-index: 990;  
-        } 
-
-        .stacked-tabs-container.is-open { 
+            flex-grow: 0; 
+            width: var(--nav-height); 
+            height: var(--nav-height); 
+            background-color: var(--color-home); 
+            margin-left: 1px;
+            z-index: 1001; 
             transform: translateY(0); 
         } 
-
-        .tab-panel { 
-            position: absolute;  
-            width: 100%; 
-            height: calc(100% - var(--nav-height));  
-            color: var(--text-light); 
-            top: var(--nav-height);  
-            left: 0; 
-            transition: transform 0.4s ease-out, z-index 0.4s ease;  
-             
-            /* [修正 2] 移除底部陰影，只保留左右兩側，讓頁面和導覽列無縫接合 */ 
-            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.2), 5px 0 20px rgba(0, 0, 0, 0.2);  
-            border-top: 2px solid rgba(255, 255, 255, 0.3);  
+        .btn-home img { 
+            height: 70%; 
+            width: 70%; 
+            object-fit: contain;
+            transform: none; 
         } 
-         
-        /* 標籤文字容器 - 模擬資料夾標籤 */ 
+
+
+        /* **[堆疊式標籤頁容器]** 佔滿整個視窗 */
+        .stacked-tabs-container { 
+            position: absolute; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            
+            /* 初始狀態：完全隱藏在模組底部 */
+            transform: translateY(100%); 
+            transition: transform 0.6s ease-out; /* 與按鈕同步 */
+            
+            z-index: 990; 
+            overflow: hidden; 
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; 
+            visibility: hidden; 
+        } 
+        
+        .stacked-tabs-container.is-open { 
+            /* **[關鍵修正]** 向上拉出，直到距離頂部一個導覽按鈕的高度 */
+            transform: translateY(var(--nav-height)); 
+            visibility: visible;
+        } 
+        
+        /* Tab Panel 結構 */
+        .tab-panel { 
+            position: absolute; 
+            width: 100%; 
+            /* **[關鍵修正]** Tab Panel 內容區域的高度為 (整個模組高度 - 導覽按鈕高度) */
+            height: calc(100% - var(--nav-height)); 
+            top: 0; 
+            left: 0; 
+            
+            /* 初始狀態：位於底部，等待被拉出 */
+            transform: translateY(100%); 
+            transition: transform 0.4s ease-out, z-index 0.4s ease; 
+            
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.2), 5px 0 20px rgba(0, 0, 0, 0.2); 
+            border-top: 2px solid rgba(255, 255, 255, 0.3); 
+            box-sizing: border-box; 
+            color: var(--text-light); 
+        } 
+
+        /* Tab Panel 顏色 */
+        .edm { background-color: var(--color-edm); }
+        .list { background-color: var(--color-list); }
+        .insta { background-color: var(--color-instagram); }
+        .branch { background-color: var(--color-branch); }
+        .monitor { background-color: var(--color-monitor); }
+
+        /* Tab Label 結構 */
         .tab-label { 
             position: absolute; 
-            top: calc(-1 * var(--tab-label-height));  
+            top: 0; 
             left: 0; 
             padding: 5px 15px; 
             height: var(--tab-label-height); 
             line-height: var(--tab-label-height); 
             font-size: 1.2em; 
             font-weight: bold; 
-            background: rgba(0, 0, 0, 0.2);  
+            background: none; 
             color: var(--text-light); 
             transform: skewX(-15deg); 
-            padding-left: 30px;  
-            transition: background-color 0.4s ease-out;  
+            padding-left: 30px; 
+            z-index: 1000; 
         } 
-        .tab-label > span { 
-            display: block; 
-            transform: skewX(15deg); 
-            line-height: calc(var(--tab-label-height) - 10px);  
-        } 
-
-        .tab-panel:not(.active) { 
-            transform: translateY(0);  
-            box-shadow: none;  
-        } 
-
+        
+        .tab-panel .tab-content {
+            /* 內容起始位置為 Tab Label 的高度 */
+            padding-top: calc(var(--tab-label-height) + var(--tab-offset)); 
+            padding-left: 20px;
+            padding-right: 20px;
+            box-sizing: border-box;
+            height: 100%; 
+            overflow-y: auto; 
+            padding-bottom: 20px; 
+        }
+        
+        /* 其他網站內容樣式 (保留) */
+        .other-website-content {
+            width: 90vw;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            margin-top: 40px;
+            color: var(--text-dark);
+            box-sizing: border-box;
+        }
     </style> 
 </head> 
 <body> 
 
-    <header class="site-header"> 
-         
-        <div class="hero-section"> 
-
-        </div> 
-         
-        <nav class="quick-links"> 
-            <div class="quick-link-btn btn-edm" data-target="edm"><span>EDM</span></div> 
-            <div class="quick-link-btn btn-list" data-target="list"><span>榜單</span></div> 
-            <div class="quick-link-btn btn-insta" data-target="insta"><span>Instagram</span></div> 
-            <div class="quick-link-btn btn-branch" data-target="branch"><span>鵬展分校</span></div> 
-            <div class="quick-link-btn btn-monitor" data-target="monitor"><span>監視系統</span></div> 
-            <div class="quick-link-btn btn-home" id="home-btn"> 
-                <img src="首頁.png" alt="回到首頁">  
+    <main class="site-content">
+        
+        <section class="floating-module" id="main-module"> 
+            
+            <div class="module-hero-section"> 
+                <h1 class="main-title">鵬展教育中心</h1>
             </div> 
-        </nav> 
-    </header> 
+            
+            <div class="stacked-tabs-container" id="stacked-tabs"> 
+                
+                <section id="edm" class="tab-panel edm"> 
+                    <div class="tab-label"><span>EDM</span></div> 
+                    <div class="tab-content"><h2>最新電子報內容</h2><p>這是 EDM 頁面的詳細內容。</p><div class="content-placeholder">EDM 內容佔位圖</div><p>更多 EDM 相關資訊...</p><div class="content-placeholder">EDM 內容佔位圖 2</div></div> 
+                </section> 
 
-    <div class="stacked-tabs-container" id="stacked-tabs"> 
-         
-        <section id="edm" class="tab-panel edm">  
-            <div class="tab-label"><span>EDM</span></div> 
-            <div class="tab-content"><h2>最新電子報內容</h2></div> 
+                <section id="list" class="tab-panel list"> 
+                    <div class="tab-label"><span>榜單</span></div> 
+                    <div class="tab-content"><h2>最新榜單公告</h2><p>這是榜單頁面的詳細內容。</p><div class="content-placeholder">榜單內容佔位圖</div><p>恭喜所有上榜的同學！</p><div class="content-placeholder">榜單內容佔位圖 2</div></div> 
+                </section> 
+
+                <section id="insta" class="tab-panel insta"> 
+                    <div class="tab-label"><span>Instagram</span></div> 
+                    <div class="tab-content"><h2>Instagram 嵌入內容</h2><p>這是 Instagram 頁面的詳細內容。</p><div class="content-placeholder">Instagram feed 佔位圖</div><p>追蹤我們的 Instagram 獲取最新動態！</p></div> 
+                </section> 
+
+                <section id="branch" class="tab-panel branch"> 
+                    <div class="tab-label"><span>鵬展分校</span></div> 
+                    <div class="tab-content"><h2>分校資訊與地圖</h2><p>這是分校頁面的詳細內容。</p><div class="content-placeholder">分校地圖佔位圖</div><p>歡迎蒞臨我們的分校。</p></div> 
+                </section> 
+
+                <section id="monitor" class="tab-panel monitor"> 
+                    <div class="tab-label"><span>監視系統</span></div> 
+                    <div class="tab-content"><h2>監視系統登入入口</h2><p>這是監視系統頁面的詳細內容。</p><div class="content-placeholder">監視系統介面佔位圖</div><p>請輸入您的帳號密碼。</p></div> 
+                </section> 
+
+            </div> 
+            
+            <nav class="quick-links"> 
+                <a class="quick-link-btn btn-edm" data-target="edm" href="#" data-index="1"><span>EDM</span></a> 
+                <a class="quick-link-btn btn-list" data-target="list" href="#" data-index="2"><span>榜單</span></a> 
+                <a class="quick-link-btn btn-insta" data-target="insta" href="#" data-index="3"><span>Instagram</span></a> 
+                <a class="quick-link-btn btn-branch" data-target="branch" href="#" data-index="4"><span>鵬展分校</span></a> 
+                <a class="quick-link-btn btn-monitor" data-target="monitor" href="#" data-index="5"><span>監視系統</span></a> 
+                <a class="quick-link-btn btn-home" id="home-btn" href="#" data-index="6"> 
+                    <img src="首頁.png" alt="回到首頁"> 
+                </a> 
+            </nav> 
         </section> 
+        
+        <section class="other-website-content">
+            <h2>關於我們</h2>
+            <p>鵬展教育中心致力於提供高品質的教育服務，幫助學生髮揮潛力，實現學業目標。</p>
+            <div class="content-placeholder">更多公司介紹</div>
+        </section>
 
-        <section id="list" class="tab-panel list"> 
-            <div class="tab-label"><span>榜單</span></div> 
-            <div class="tab-content"><h2>最新榜單公告</h2></div> 
-        </section> 
-
-        <section id="insta" class="tab-panel insta"> 
-            <div class="tab-label"><span>Instagram</span></div> 
-            <div class="tab-content"><h2>Instagram 嵌入內容</h2></div> 
-        </section> 
-
-        <section id="branch" class="tab-panel branch"> 
-            <div class="tab-label"><span>鵬展分校</span></div> 
-            <div class="tab-content"><h2>分校資訊與地圖</h2></div> 
-        </section> 
-
-        <section id="monitor" class="tab-panel monitor"> 
-            <div class="tab-label"><span>監視系統</span></div> 
-            <div class="tab-content"><h2>監視系統登入入口</h2></div> 
-        </section> 
-
-    </div> 
+    </main>
 
     <script> 
         document.addEventListener('DOMContentLoaded', function() { 
-            const header = document.querySelector('.site-header'); 
+            const module = document.getElementById('main-module');
             const tabsContainer = document.getElementById('stacked-tabs'); 
-            const buttons = document.querySelectorAll('.quick-link-btn:not(.btn-home)');  
-            const navButtons = document.querySelectorAll('.quick-link-btn');  
+            const buttons = document.querySelectorAll('.quick-link-btn:not(.btn-home)'); 
+            const navButtons = document.querySelectorAll('.quick-link-btn'); 
             const homeButton = document.getElementById('home-btn'); 
             const panels = document.querySelectorAll('.tab-panel'); 
-            const tabLabelHeight = 40;  
-            const tabOffset = 15;  
+            
+            const root = getComputedStyle(document.documentElement);
+            const navHeight = parseFloat(root.getPropertyValue('--nav-height')); 
+            const tabOffset = parseFloat(root.getPropertyValue('--tab-offset')); 
             const baseZIndex = 5; 
-
-            // 確保 Home 按鈕一開始就是 active 狀態 
-            setNavActive(homeButton);  
-
-            // 初始執行一次，讓所有 tab panel 藏在導覽列下方 
-            panels.forEach((panel, index) => { 
-                panel.style.transform = `translateY(${baseZIndex * tabOffset}px)`; 
-            }); 
-
-
-            // 1. 功能按鈕點擊切換邏輯 
+            
+            let activeNavIndex = 0; 
+            
+            // 初始設定所有 tab panel 的 z-index
+            panels.forEach((panel) => { 
+                panel.style.zIndex = baseZIndex;
+            });
+            
+            // 1. 導覽按鈕點擊邏輯
             buttons.forEach(button => { 
-                button.addEventListener('click', function() { 
+                button.addEventListener('click', function(e) { 
+                    e.preventDefault(); 
                     const targetId = this.getAttribute('data-target'); 
-                    const isAlreadyOpen = tabsContainer.classList.contains('is-open'); 
-
-                    header.classList.add('is-folded'); 
-                    tabsContainer.classList.add('is-open'); 
-
-                    setNavActive(this);  
-                    setTabOrder(targetId, isAlreadyOpen);  
+                    const targetIndex = parseInt(this.getAttribute('data-index')); 
+                    
+                    updateStackingAndPosition(targetIndex, targetId); 
                 }); 
             }); 
-
-            // 2. 回到首頁按鈕邏輯 (保持動畫效果) 
-            homeButton.addEventListener('click', function() { 
-                // 確保所有 panel 都有 transition 屬性，以執行動畫 
-                panels.forEach(p => p.style.transition = 'transform 0.4s ease-out, z-index 0.4s ease');  
-                 
-                header.classList.remove('is-folded'); 
-                tabsContainer.classList.remove('is-open'); 
-
-                setNavActive(this);  
-                panels.forEach(p => p.classList.remove('active')); 
-                 
-                // 重置所有 tab-panel 的 transform，確保它們回到初始堆疊狀態 (在導覽列下方) 
-                panels.forEach((panel) => { 
-                    const id = panel.id; 
-                    const order = ['edm', 'list', 'insta', 'branch', 'monitor']; 
-                    const initialZIndex = baseZIndex - order.indexOf(id); 
-                     
-                    panel.style.zIndex = initialZIndex;  
-                    panel.style.transform = `translateY(${initialZIndex * tabOffset}px)`;  
-                     
-                    const label = panel.querySelector('.tab-label'); 
-                    label.style.backgroundColor = ''; 
-                    label.style.color = ''; 
-                    label.querySelector('span').style.color = ''; 
-                }); 
+            
+            // 2. 首頁按鈕邏輯：全部收回
+            homeButton.addEventListener('click', function(e) { 
+                e.preventDefault(); 
+                updateStackingAndPosition(0); 
             }); 
+            
+            // 3. 核心邏輯：控制按鈕和 Tab Panel 的 Y 軸移動與 Z 軸堆疊
+            function updateStackingAndPosition(newIndex, targetId = null) {
+                // **[關鍵修正]** 動態計算按鈕抬升的距離 (模組高度 - 按鈕高度)
+                const moduleHeight = module.offsetHeight;
+                const navTranslateY = moduleHeight - navHeight; 
+                
+                let nextActiveIndex = newIndex;
+                
+                if (newIndex > 0 && newIndex === activeNavIndex) {
+                    // 點擊當前最上層的按鈕，收回該層
+                    nextActiveIndex = newIndex - 1;
+                } else if (newIndex === 0) {
+                    nextActiveIndex = 0; // Home 鍵
+                }
 
-            // 導覽按鈕的立體效果 
-            function setNavActive(activeButton) { 
-                navButtons.forEach(btn => btn.classList.remove('is-active-nav')); 
-                activeButton.classList.add('is-active-nav'); 
-            } 
-             
-            // 3. 調整堆疊頁面順序與視覺效果的函數 
-            function setTabOrder(activeId, isAlreadyOpen) { 
-                const order = ['edm', 'list', 'insta', 'branch', 'monitor']; 
-                 
-                // 動畫邏輯：已展開時移除 transition，初次展開時確保 transition 存在 
-                if (isAlreadyOpen) { 
-                    panels.forEach(p => p.style.transition = 'none'); 
-                } else { 
-                    panels.forEach(p => p.style.transition = 'transform 0.4s ease-out, z-index 0.4s ease'); 
-                } 
-                 
-                // 將目標區塊移動到隊伍最前面 
-                const currentIndex = order.indexOf(activeId); 
-                if (currentIndex > -1) { 
-                    order.splice(currentIndex, 1); 
-                    order.unshift(activeId); 
-                } 
-                 
-                panels.forEach(p => p.classList.remove('active')); 
-                 
-                requestAnimationFrame(() => { 
-                    order.forEach((id, index) => { 
-                        const panel = document.getElementById(id); 
-                        if(panel) { 
-                            panel.style.zIndex = baseZIndex - index;  
-                            const label = panel.querySelector('.tab-label'); 
+                activeNavIndex = nextActiveIndex;
+                
+                // 調整 Tab 容器的 Y 軸位置
+                if (activeNavIndex > 0) {
+                    tabsContainer.classList.add('is-open');
+                } else {
+                    tabsContainer.classList.remove('is-open');
+                }
 
-                            if (id === activeId) { 
-                                panel.classList.add('active'); 
-                                // 被選中頁面：維持在最上方 
-                                panel.style.transform = `translateY(0px)`; 
-                                 
-                                label.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';  
-                                label.style.color = 'var(--text-light)'; 
-                                label.querySelector('span').style.color = 'var(--text-light)'; 
+                navButtons.forEach(button => {
+                    const index = parseInt(button.getAttribute('data-index'));
+                    const panel = document.getElementById(button.getAttribute('data-target'));
 
-                            } else { 
-                                // 未被選中頁面：向下位移，距離為：標籤高度 + (堆疊順序 * 錯位間距) 
-                                const offset = tabLabelHeight + (index * tabOffset); 
-                                panel.style.transform = `translateY(${offset}px)`; 
-                                 
-                                // 讓非 active 頁面的標籤背景色 = 該頁面的顏色  
-                                const panelColor = getComputedStyle(panel).backgroundColor; 
-                                label.style.backgroundColor = panelColor; 
-                                 
-                                label.style.color = 'var(--text-light)';  
-                                label.querySelector('span').style.color = 'var(--text-light)'; 
-                            } 
-                        } 
-                    }); 
+                    if (panel) {
+                        // 處理按鈕抬升
+                        if (index <= activeNavIndex && index !== 6) { 
+                            // **[抬升修正]** 按鈕從底部抬升到頂部
+                            button.style.transform = `translateY(-${navTranslateY}px) skewX(-15deg)`;
+                            
+                            // Tab Panel 展開到內容區域 (從底部 100% 移到頂部 0)
+                            panel.style.transform = `translateY(0px)`;
+                            
+                            panel.style.zIndex = baseZIndex + index; 
+                            panel.classList.add('active');
 
-                    // 如果是無動畫跳轉，在完成後立即恢復 transition 屬性 
-                    if (isAlreadyOpen) { 
-                        setTimeout(() => { 
-                            panels.forEach(p => p.style.transition = 'transform 0.4s ease-out, z-index 0.4s ease'); 
-                        }, 10); 
-                    } 
-                }); 
-            } 
+                        } else if (index === 6) { 
+                             // Home 鍵：始終在最右邊，且只在有 Tab 展開時抬升
+                             if (activeNavIndex > 0) {
+                                 button.style.transform = `translateY(-${navTranslateY}px)`;
+                             } else {
+                                 button.style.transform = `translateY(0px)`;
+                             }
+                        } else {
+                            // 按鈕收回 (位於 activeNavIndex 右側的按鈕)
+                            button.style.transform = `translateY(0px) skewX(-15deg)`;
+                            
+                            // Tab Panel 收回到底部
+                            panel.style.transform = `translateY(100%)`; 
+                            panel.classList.remove('active');
+                            
+                            panel.style.zIndex = baseZIndex - index; 
+                        }
+                    }
+                });
+
+                // 處理按鈕選中的視覺效果
+                navButtons.forEach(btn => btn.classList.remove('is-active-nav'));
+                const activeBtn = document.querySelector(`.quick-link-btn[data-index="${activeNavIndex}"]`);
+                if (activeBtn) {
+                    activeBtn.classList.add('is-active-nav');
+                } else if (activeNavIndex === 0) {
+                    homeButton.classList.add('is-active-nav');
+                }
+                
+                // 調整所有非活躍 Tab Panel 的堆疊偏移，模擬資料夾堆疊
+                panels.forEach(panel => {
+                    const panelId = panel.id;
+                    const btn = document.querySelector(`[data-target="${panelId}"]`);
+                    if (!btn) return;
+
+                    const panelIndex = parseInt(btn.getAttribute('data-index'));
+
+                    if (panelIndex <= activeNavIndex) {
+                        // 偏移量：從 activeNavIndex 往左數的距離 * 偏移量
+                        const stackIndex = activeNavIndex - panelIndex; 
+                        
+                        // Tab Panel 內容區域的偏移 (向下推，露出上方標籤)
+                        const content = panel.querySelector('.tab-content');
+                        content.style.paddingTop = `calc(var(--tab-label-height) + ${stackIndex * tabOffset}px)`;
+                        
+                        // Tab Label 的偏移 (標籤本身向下位移，模擬被推到下一層)
+                        const label = panel.querySelector('.tab-label');
+                        label.style.top = `${stackIndex * tabOffset}px`;
+                    }
+                });
+            }
         }); 
     </script> 
 </body> 
