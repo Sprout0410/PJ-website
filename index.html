@@ -20,6 +20,9 @@
             --nav-height: 60px; /* 導覽按鈕統一高度 */ 
             --tab-label-height: 40px; /* 標籤高度 */ 
             --tab-offset: 15px; /* 資料夾間距 */ 
+            /* 新增變數：水平導覽列寬度 */
+            --side-nav-width: 300px; 
+            --side-nav-padding: 20px; /* 10px 左 + 10px 右 */
         } 
 
         body { 
@@ -47,35 +50,88 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); 
             background-color: #fff; 
             margin-bottom: 80px; 
+            
+            /* 未點按時的封面背景圖片 */
+            background-image: url('封面.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
-        /* 浮動視窗封面 (最底層) */ 
-        .module-hero-section { 
-            height: 100%; 
-            width: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            background-image: url('封面.jpg'); 
-            background-size: cover; 
-            background-position: center; 
-            background-repeat: no-repeat;
-            
+        /* ------------------------------------------------------------------ */
+        /* 水平浮動導覽列 (抽屜功能) (略) */
+        /* ------------------------------------------------------------------ */
+        #fixed-nav-container {
+            position: fixed;
+            top: 20px; 
+            left: 20px;
+            height: var(--nav-height); 
+            z-index: 2000;
             display: flex; 
-            justify-content: center; 
             align-items: center; 
-            color: var(--text-light); 
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); 
-            z-index: 10; 
-        } 
-
-        .main-title { 
-            font-size: 4vw; 
-            font-weight: bold; 
-            letter-spacing: 5px; 
-        } 
+            width: var(--nav-height); 
+            overflow: hidden; 
+            transition: width 0.4s ease-out; 
+            border-radius: 4px; 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            background-color: rgba(128, 128, 128, 0.6); 
+        }
+        #fixed-nav-container.is-open {
+            width: calc(var(--nav-height) + var(--side-nav-width) + var(--side-nav-padding)); 
+        }
+        #fixed-logo-btn {
+            position: relative; 
+            width: var(--nav-height); 
+            height: var(--nav-height);
+            background-color: transparent; 
+            box-shadow: none;
+            border-radius: 0;
+            cursor: pointer;
+            flex-shrink: 0; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+        #fixed-logo-btn:hover {
+            background-color: rgba(0, 0, 0, 0.1); 
+            transform: scale(1.05);
+        }
+        #fixed-logo-btn img {
+            max-width: 80%; 
+            max-height: 80%;
+            object-fit: contain;
+        }
+        #side-nav-horizontal {
+            height: 100%; 
+            background-color: transparent; 
+            display: flex; 
+            align-items: center; 
+            width: var(--side-nav-width); 
+            transition: none;
+            padding: 0 10px; 
+            flex-shrink: 0; 
+            margin-left: 0; 
+        }
+        .side-nav-item {
+            padding: 12px 10px;
+            color: var(--text-light);
+            text-decoration: none;
+            text-align: center;
+            font-size: 1em;
+            font-weight: 500;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            white-space: nowrap; 
+            flex-shrink: 0; 
+        }
+        .side-nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
         
-        /* 導覽按鈕 (略) */
+        /* ------------------------------------------------------------------ */
+        /* 底部快速導覽按鈕列 (quick-links) 樣式 (略) */
+        /* ------------------------------------------------------------------ */
         .quick-links { 
             flex-shrink: 0; 
             height: var(--nav-height); 
@@ -85,9 +141,9 @@
             bottom: 0; 
             left: 0;
             z-index: 1000; 
+            /* 保留底部按鈕的陰影，讓它看起來突出於頁面 */
             box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.3); 
         } 
-        
         .quick-link-btn { 
             display: flex; 
             justify-content: center; 
@@ -101,7 +157,29 @@
             background-color: var(--color-home); 
         } 
 
-        /* 修正：為每個按鈕添加背景色 (略) */
+        .quick-link-btn.is-active-nav {
+            z-index: 1100;
+        }
+        
+        /* 堆疊式按鈕頂部邊界的高光 (::after) */
+        .quick-link-btn:not(.btn-home)::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px; 
+            background-color: rgba(255, 255, 255, 0.7);
+            transform: skewX(-15deg);
+            transition: opacity 0.3s ease;
+            opacity: 0; 
+            z-index: 2;
+        }
+        .quick-link-btn:not(.btn-home).is-active-nav::after {
+            opacity: 1;
+        }
+        
+        /* 按鈕顏色 */
         .btn-edm { background-color: var(--color-edm); }
         .btn-list { background-color: var(--color-list); }
         .btn-insta { background-color: var(--color-instagram); }
@@ -136,14 +214,17 @@
             transform: none; 
         } 
 
-
-        /* 堆疊式標籤頁容器 (略) */
+        /* ------------------------------------------------------------------ */
+        /* 堆疊式標籤頁容器 */
+        /* ------------------------------------------------------------------ */
         .stacked-tabs-container { 
             position: absolute; 
             top: 0; 
+            /* 高度設為 100%，佔滿整個浮動模組 */
             width: 100%; 
             height: 100%; 
             
+            /* 預設從底部滑出，覆蓋整個模組 */
             transform: translateY(100%); 
             transition: transform 0.6s ease-out; 
             
@@ -153,68 +234,84 @@
         } 
         
         .stacked-tabs-container.is-open { 
-            transform: translateY(var(--nav-height)); 
+            transform: translateY(var(--nav-height)); /* 讓出底部導覽列的高度 */
             visibility: visible;
         } 
         
-        /* Tab Panel 結構 (略) */
+        /* Tab Panel 結構 */
         .tab-panel { 
             position: absolute; 
             width: 100%; 
-            height: calc(100% - var(--nav-height)); 
+            height: 100%; 
             top: 0; 
             left: 0; 
             
             transform: translateY(100%); 
             transition: transform 0.6s ease-out; 
             
-            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.2), 5px 0 20px rgba(0, 0, 0, 0.2); 
-            border-top: 2px solid rgba(255, 255, 255, 0.3); 
+            /* 移除 Panel 邊緣陰影 */
+            box-shadow: none; 
+            /* 移除 Panel 頂部高光邊界 */
+            border-top: none; 
+            
             box-sizing: border-box; 
             color: var(--text-light); 
             overflow: hidden; 
+            
+            background-color: #333; 
         } 
-
-        /* Tab Panel 顏色 - 這裡的顏色會成為 tab-content 的背景色 (略) */
+        
+        /* Panel 顏色 (使用 var 設定為基礎色，在 .tab-label 中會被覆蓋為純色) */
         .edm { background-color: var(--color-edm); }
         .list { background-color: var(--color-list); }
         .insta { background-color: var(--color-instagram); }
         .branch { background-color: var(--color-branch); }
         .monitor { background-color: var(--color-monitor); }
 
-        /* Tab Label 結構 */
-        .tab-label { 
-            position: absolute; 
+
+        /* Tab Label (資料夾標籤本身) */
+        .tab-panel .tab-label {
+            position: absolute;
             top: 0; 
-            left: 0; 
-            /* **[標籤背景修正]** 繼承父層 Tab Panel 的背景色 */
-            background-color: inherit; 
+            left: 0;
+            width: 100%;
+            height: var(--tab-label-height);
             
-            padding: 5px 15px; 
-            height: var(--tab-label-height); 
-            line-height: var(--tab-label-height); 
-            font-size: 1.2em; 
-            font-weight: bold; 
+            /* 基礎設定：保持透明，讓其透出 Panel 的顏色，避免黑條 */
+            background-color: transparent; 
             
-            color: var(--text-light); 
-            
-            transform: skewX(-15deg); 
-            padding-left: 30px; 
-            
-            /* **[層次修正]** 確保標籤整體在最上層 */
-            z-index: 1000; 
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+            box-sizing: border-box;
             transition: top 0.6s ease-out; 
-        } 
+            z-index: 10; 
+        }
         
+        /* 【最終修正】覆蓋每個 Tab Label 的背景色，使其與其 Panel 顏色一致，消除色差 */
+        .edm .tab-label { background-color: var(--color-edm); }
+        .list .tab-label { background-color: var(--color-list); }
+        .insta .tab-label { background-color: var(--color-instagram); }
+        .branch .tab-label { background-color: var(--color-branch); }
+        .monitor .tab-label { background-color: var(--color-monitor); }
+
+        .tab-panel .tab-label span {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        
+        /* Tab Content 內容區塊 */
         .tab-panel .tab-content {
-            /* **[層次修正]** 確保內容區塊在標籤之下，因為 Tab Panel 的 Z-index 已經被 JS 控制 */
             position: relative; 
-            z-index: 1; /* 比 tab-label 的 1000 小 */
+            z-index: 1; 
 
             overflow-y: auto; 
             -webkit-overflow-scrolling: touch;
 
-            height: 100%;
+            /* 內容區域的高度和寬度需重新計算 */
+            height: calc(100% - var(--nav-height)); 
+            width: 100%; 
             box-sizing: border-box; 
             
             padding-top: calc(var(--tab-label-height) + var(--tab-offset)); 
@@ -222,7 +319,93 @@
             padding-right: 20px;
             padding-bottom: 20px; 
         }
+
+        /* ------------------------------------------------------------------ */
+        /* EDM 頁面內容排版 CSS - 修復 EDM 左右佈局 */
+        /* ------------------------------------------------------------------ */
+        .edm .tab-content {
+            display: flex; 
+            padding: 0; 
+            box-sizing: border-box; 
+            padding-top: calc(var(--tab-label-height) + var(--tab-offset)); 
+            overflow-y: hidden; 
+            padding-bottom: 0;
+            /* 增加 1px 寬度覆蓋右側邊緣，確保按鈕堆疊不露縫隙 */
+            width: calc(100% + 1px); 
+        }
         
+        .edm-left {
+            flex: 0 0 50%; 
+            height: 100%;
+            
+            /* 圖片適應性調整：貼合上下邊界並保持比例 */
+            background-image: url('鵬展教育中心.jpg'); 
+            background-size: contain; 
+            background-position: center;
+            background-repeat: no-repeat; 
+            
+            /* 讓圖片在 contain 模式下居中顯示 */
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+        }
+
+        .edm-right {
+            flex: 1; 
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; 
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-y: auto; 
+        }
+        
+        .edm-header h2 {
+            font-size: 2em;
+            margin-top: 0;
+        }
+
+        .edm-bottom-content {
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        .edm-bottom-content p {
+            font-size: 1.2em;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin-bottom: 15px; 
+            margin-top: 0; 
+        }
+        
+        .edm-bottom-content img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .edm-bottom-content img:hover {
+            transform: scale(1.02);
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; transform: translateY(0); }
+            50% { opacity: 0.2; transform: translateY(5px); }
+        }
+
+        .arrow-blink {
+            display: inline-block;
+            animation: blink 1.5s infinite ease-in-out;
+            margin-left: 8px;
+        }
+        /* ------------------------------------------------------------------ */
+
+
         /* 其他網站內容樣式 (略) */
         .other-website-content {
             width: 90vw; 
@@ -240,21 +423,51 @@
 </head> 
 <body> 
 
+    <div id="fixed-nav-container">
+        <div id="fixed-logo-btn">
+            <img src="鵬展浮動logo.png" alt="鵬展 Logo">
+        </div>
+        
+        <nav id="side-nav-horizontal">
+            <a href="#" class="side-nav-item">按鈕一</a>
+            <a href="#" class="side-nav-item">按鈕二</a>
+            <a href="#" class="side-nav-item">按鈕三</a>
+            <a href="#" class="side-nav-item">按鈕四</a>
+        </nav>
+    </div>
+
     <main class="site-content">
         
         <section class="floating-module" id="main-module"> 
-            
-            <div class="module-hero-section"> 
-
-            </div> 
             
             <div class="stacked-tabs-container" id="stacked-tabs"> 
                 
                 <section id="edm" class="tab-panel edm"> 
                     <div class="tab-label"><span>EDM</span></div> 
-                    <div class="tab-content"><h2>最新電子報內容</h2><p>這是 EDM 頁面的詳細內容。</p><div class="content-placeholder">EDM 內容佔位圖</div><p>更多 EDM 相關資訊...</p><div class="content-placeholder">EDM 內容佔位圖 2</div><div style="height: 500px;"></div><p>滾動測試區塊</p></div> 
+                    
+                    <div class="tab-content">
+                        <div class="edm-left"></div> 
+                        
+                        <div class="edm-right">
+                            
+                            <div class="edm-header">
+                                <h2>堅持與陪伴的起點</h2>
+                            </div>
+                            
+                            <div class="edm-bottom-content">
+                                <p>
+                                    鵬展傳送門
+                                    <span class="arrow-blink">⬇️</span>
+                                </p>
+                                <a href="http://www.pjmath.tw/" target="_blank">
+                                    <img src="學長正身照.jpg" alt="學長正身照 - 點擊了解更多" title="點擊前往鵬展官網">
+                                </a>
+                            </div>
+                            <p style="color: #333; font-size: 0.8em; margin-top: 40px;">（如果右側內容很多，這裡可以滾動）</p>
+                        </div>
+                    </div> 
                 </section> 
-
+                
                 <section id="list" class="tab-panel list"> 
                     <div class="tab-label"><span>榜單</span></div> 
                     <div class="tab-content"><h2>最新榜單公告</h2><p>這是榜單頁面的詳細內容。</p><div class="content-placeholder">榜單內容佔位圖</div><p>恭喜所有上榜的同學！</p><div class="content-placeholder">榜單內容佔位圖 2</div><div style="height: 500px;"></div><p>滾動測試區塊</p></div> 
@@ -299,6 +512,22 @@
 
     <script> 
         document.addEventListener('DOMContentLoaded', function() { 
+            // 水平導覽列邏輯 (略)
+            const fixedLogoBtn = document.getElementById('fixed-logo-btn');
+            const fixedNavContainer = document.getElementById('fixed-nav-container');
+
+            fixedLogoBtn.addEventListener('click', function() {
+                fixedNavContainer.classList.toggle('is-open');
+            });
+            
+            const sideNavItems = document.querySelectorAll('.side-nav-item');
+            sideNavItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // fixedNavContainer.classList.remove('is-open'); 
+                });
+            });
+            // End of 修正功能
+
             const module = document.getElementById('main-module');
             const tabsContainer = document.getElementById('stacked-tabs'); 
             const buttons = document.querySelectorAll('.quick-link-btn:not(.btn-home)'); 
@@ -363,6 +592,12 @@
                     const index = parseInt(button.getAttribute('data-index'));
                     const panel = document.getElementById(button.getAttribute('data-target'));
 
+                    // 處理按鈕的 'is-active-nav' 類別
+                    button.classList.remove('is-active-nav');
+                    if (index === activeNavIndex && index !== 6) {
+                        button.classList.add('is-active-nav');
+                    }
+
                     if (panel) {
                         if (index <= activeNavIndex && index !== 6) { 
                             button.style.transform = `translateY(-${navTranslateY}px) skewX(-15deg)`;
@@ -394,14 +629,12 @@
                     }
                 });
                 
-                navButtons.forEach(btn => btn.classList.remove('is-active-nav'));
-                const activeBtn = document.querySelector(`.quick-link-btn[data-index="${activeNavIndex}"]`);
-                if (activeBtn) {
-                    activeBtn.classList.add('is-active-nav');
-                } else if (activeNavIndex === 0) {
+                homeButton.classList.remove('is-active-nav');
+                if (activeNavIndex === 0) {
                     homeButton.classList.add('is-active-nav');
                 }
                 
+                // 處理 Tab Label 的堆疊位置
                 panels.forEach(panel => {
                     const panelId = panel.id;
                     const btn = document.querySelector(`[data-target="${panelId}"]`);
@@ -409,13 +642,11 @@
 
                     const panelIndex = parseInt(btn.getAttribute('data-index'));
                     const label = panel.querySelector('.tab-label');
-                    const content = panel.querySelector('.tab-content');
 
                     if (panelIndex <= activeNavIndex) {
                         const stackIndex = activeNavIndex - panelIndex; 
                         
                         label.style.top = `${stackIndex * tabOffset}px`;
-                        content.style.paddingTop = `calc(var(--tab-label-height) + ${stackIndex * tabOffset}px)`;
                     }
                 });
             }
