@@ -59,6 +59,8 @@
             background-image: url('封面.jpg'); 
             background-size: cover; 
             background-position: center; 
+            background-repeat: no-repeat;
+            
             display: flex; 
             justify-content: center; 
             align-items: center; 
@@ -73,7 +75,7 @@
             letter-spacing: 5px; 
         } 
         
-        /* 導覽按鈕 */
+        /* 導覽按鈕 (略) */
         .quick-links { 
             flex-shrink: 0; 
             height: var(--nav-height); 
@@ -99,7 +101,7 @@
             background-color: var(--color-home); 
         } 
 
-        /* 修正：為每個按鈕添加背景色 */
+        /* 修正：為每個按鈕添加背景色 (略) */
         .btn-edm { background-color: var(--color-edm); }
         .btn-list { background-color: var(--color-list); }
         .btn-insta { background-color: var(--color-instagram); }
@@ -135,7 +137,7 @@
         } 
 
 
-        /* 堆疊式標籤頁容器 */
+        /* 堆疊式標籤頁容器 (略) */
         .stacked-tabs-container { 
             position: absolute; 
             top: 0; 
@@ -147,8 +149,6 @@
             
             z-index: 990; 
             overflow: hidden; 
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch; 
             visibility: hidden; 
         } 
         
@@ -157,7 +157,7 @@
             visibility: visible;
         } 
         
-        /* Tab Panel 結構 */
+        /* Tab Panel 結構 (略) */
         .tab-panel { 
             position: absolute; 
             width: 100%; 
@@ -166,15 +166,16 @@
             left: 0; 
             
             transform: translateY(100%); 
-            transition: transform 0.6s ease-out; /* 僅保留 transform 的 0.6s 同步 */
+            transition: transform 0.6s ease-out; 
             
             box-shadow: -5px 0 20px rgba(0, 0, 0, 0.2), 5px 0 20px rgba(0, 0, 0, 0.2); 
             border-top: 2px solid rgba(255, 255, 255, 0.3); 
             box-sizing: border-box; 
             color: var(--text-light); 
+            overflow: hidden; 
         } 
 
-        /* Tab Panel 顏色 */
+        /* Tab Panel 顏色 - 這裡的顏色會成為 tab-content 的背景色 (略) */
         .edm { background-color: var(--color-edm); }
         .list { background-color: var(--color-list); }
         .insta { background-color: var(--color-instagram); }
@@ -186,30 +187,43 @@
             position: absolute; 
             top: 0; 
             left: 0; 
+            /* **[標籤背景修正]** 繼承父層 Tab Panel 的背景色 */
+            background-color: inherit; 
+            
             padding: 5px 15px; 
             height: var(--tab-label-height); 
             line-height: var(--tab-label-height); 
             font-size: 1.2em; 
             font-weight: bold; 
-            background: none; 
+            
             color: var(--text-light); 
+            
             transform: skewX(-15deg); 
             padding-left: 30px; 
+            
+            /* **[層次修正]** 確保標籤整體在最上層 */
             z-index: 1000; 
             transition: top 0.6s ease-out; 
         } 
         
         .tab-panel .tab-content {
+            /* **[層次修正]** 確保內容區塊在標籤之下，因為 Tab Panel 的 Z-index 已經被 JS 控制 */
+            position: relative; 
+            z-index: 1; /* 比 tab-label 的 1000 小 */
+
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch;
+
+            height: 100%;
+            box-sizing: border-box; 
+            
             padding-top: calc(var(--tab-label-height) + var(--tab-offset)); 
             padding-left: 20px;
             padding-right: 20px;
-            box-sizing: border-box;
-            height: 100%; 
-            overflow-y: auto; 
             padding-bottom: 20px; 
         }
         
-        /* 其他網站內容樣式 (保留) */
+        /* 其他網站內容樣式 (略) */
         .other-website-content {
             width: 90vw; 
             max-width: 1000px;
@@ -238,27 +252,27 @@
                 
                 <section id="edm" class="tab-panel edm"> 
                     <div class="tab-label"><span>EDM</span></div> 
-                    <div class="tab-content"><h2>最新電子報內容</h2><p>這是 EDM 頁面的詳細內容。</p><div class="content-placeholder">EDM 內容佔位圖</div><p>更多 EDM 相關資訊...</p><div class="content-placeholder">EDM 內容佔位圖 2</div></div> 
+                    <div class="tab-content"><h2>最新電子報內容</h2><p>這是 EDM 頁面的詳細內容。</p><div class="content-placeholder">EDM 內容佔位圖</div><p>更多 EDM 相關資訊...</p><div class="content-placeholder">EDM 內容佔位圖 2</div><div style="height: 500px;"></div><p>滾動測試區塊</p></div> 
                 </section> 
 
                 <section id="list" class="tab-panel list"> 
                     <div class="tab-label"><span>榜單</span></div> 
-                    <div class="tab-content"><h2>最新榜單公告</h2><p>這是榜單頁面的詳細內容。</p><div class="content-placeholder">榜單內容佔位圖</div><p>恭喜所有上榜的同學！</p><div class="content-placeholder">榜單內容佔位圖 2</div></div> 
+                    <div class="tab-content"><h2>最新榜單公告</h2><p>這是榜單頁面的詳細內容。</p><div class="content-placeholder">榜單內容佔位圖</div><p>恭喜所有上榜的同學！</p><div class="content-placeholder">榜單內容佔位圖 2</div><div style="height: 500px;"></div><p>滾動測試區塊</p></div> 
                 </section> 
 
                 <section id="insta" class="tab-panel insta"> 
                     <div class="tab-label"><span>Instagram</span></div> 
-                    <div class="tab-content"><h2>Instagram 嵌入內容</h2><p>這是 Instagram 頁面的詳細內容。</p><div class="content-placeholder">Instagram feed 佔位圖</div><p>追蹤我們的 Instagram 獲取最新動態！</p></div> 
+                    <div class="tab-content"><h2>Instagram 嵌入內容</h2><p>這是 Instagram 頁面的詳細內容。</p><div class="content-placeholder">Instagram feed 佔位圖</div><p>追蹤我們的 Instagram 獲取最新動態！</p><div style="height: 500px;"></div><p>滾動測試區塊</p></div> 
                 </section> 
 
                 <section id="branch" class="tab-panel branch"> 
                     <div class="tab-label"><span>鵬展分校</span></div> 
-                    <div class="tab-content"><h2>分校資訊與地圖</h2><p>這是分校頁面的詳細內容。</p><div class="content-placeholder">分校地圖佔位圖</div><p>歡迎蒞臨我們的分校。</p></div> 
+                    <div class="tab-content"><h2>分校資訊與地圖</h2><p>這是分校頁面的詳細內容。</p><div class="content-placeholder">分校地圖佔位圖</div><p>歡迎蒞臨我們的分校。</p><div style="height: 500px;"></div><p>滾動測試區塊</p></div> 
                 </section> 
 
                 <section id="monitor" class="tab-panel monitor"> 
                     <div class="tab-label"><span>監視系統</span></div> 
-                    <div class="tab-content"><h2>監視系統登入入口</h2><p>這是監視系統頁面的詳細內容。</p><div class="content-placeholder">監視系統介面佔位圖</div><p>請輸入您的帳號密碼。</p></div> 
+                    <div class="tab-content"><h2>監視系統登入入口</h2><p>這是監視系統頁面的詳細內容。</p><div class="content-placeholder">監視系統介面佔位圖</div><p>請輸入您的帳號密碼。</p><div style="height: 500px;"></div><p>滾動測試區塊</p></div> 
                 </section> 
 
             </div> 
@@ -292,8 +306,8 @@
             const homeButton = document.getElementById('home-btn'); 
             const panels = document.querySelectorAll('.tab-panel'); 
             
-            const transitionDuration = 600; // 0.6s in ms
-            const zIndexDelay = 500; // 延遲 0.5s 調整 Z-index
+            const transitionDuration = 600; 
+            const zIndexDelay = 500; 
             
             const root = getComputedStyle(document.documentElement);
             const navHeight = parseFloat(root.getPropertyValue('--nav-height')); 
@@ -318,10 +332,8 @@
             homeButton.addEventListener('click', function(e) { 
                 e.preventDefault(); 
                 
-                // 1. 觸發所有按鈕和 Tab Panel 下推動畫 (activeNavIndex = 0)
                 updateStackingAndPosition(0); 
                 
-                // 2. 等待動畫完成後 (0.6s) 再將 tabsContainer 隱藏
                 setTimeout(() => {
                     tabsContainer.classList.remove('is-open'); 
                 }, transitionDuration);
@@ -333,7 +345,6 @@
                 
                 let nextActiveIndex = newIndex;
                 
-                // 判斷是否為收回當前活躍頁面
                 const isClosingCurrent = newIndex > 0 && newIndex === activeNavIndex;
                 if (isClosingCurrent) {
                     nextActiveIndex = newIndex - 1;
@@ -354,44 +365,35 @@
 
                     if (panel) {
                         if (index <= activeNavIndex && index !== 6) { 
-                            // 展開或持續展開的狀態 (抬升)
                             button.style.transform = `translateY(-${navTranslateY}px) skewX(-15deg)`;
                             panel.style.transform = `translateY(0px)`;
                             panel.classList.add('active');
-
-                            // 立即調整 Z-index
                             panel.style.zIndex = baseZIndex + index;
 
                         } else if (index === 6) { 
-                             // Home 鍵
                              if (activeNavIndex > 0) {
                                  button.style.transform = `translateY(-${navTranslateY}px)`;
                              } else {
                                  button.style.transform = `translateY(0px)`;
                              }
                         } else {
-                            // 收回或維持收回的狀態 (下推)
                             button.style.transform = `translateY(0px) skewX(-15deg)`;
-                            panel.style.transform = `translateY(100%)`; // 下推動畫
+                            panel.style.transform = `translateY(100%)`; 
                             panel.classList.remove('active');
 
-                            // **[最終關鍵修正]**：延遲 Z-index 調整，確保內容不會被提早切掉
                             const isCurrentlyClosing = index === prevActiveIndex && activeNavIndex < prevActiveIndex;
 
                             if (isCurrentlyClosing) {
-                                // 如果是當前活躍頁面被收回，則延遲 0.5s 再降低其 Z-index
                                 setTimeout(() => {
                                     panel.style.zIndex = baseZIndex - index; 
                                 }, zIndexDelay);
                             } else {
-                                // 其他非活躍頁面，Z-index 立即調整
                                 panel.style.zIndex = baseZIndex - index; 
                             }
                         }
                     }
                 });
                 
-                // 處理按鈕選中的視覺效果 (保持不變)
                 navButtons.forEach(btn => btn.classList.remove('is-active-nav'));
                 const activeBtn = document.querySelector(`.quick-link-btn[data-index="${activeNavIndex}"]`);
                 if (activeBtn) {
@@ -400,7 +402,6 @@
                     homeButton.classList.add('is-active-nav');
                 }
                 
-                // 調整 Tab Panel 的堆疊偏移 (保持不變)
                 panels.forEach(panel => {
                     const panelId = panel.id;
                     const btn = document.querySelector(`[data-target="${panelId}"]`);
@@ -422,4 +423,3 @@
     </script> 
 </body> 
 </html>
-
