@@ -41,6 +41,7 @@
         .floating-module {
             width: 90vw; 
             max-width: 1000px; 
+            /* 保持固定高度，讓內容在內部滾動 */
             height: 80vh; 
             max-height: 700px; 
             margin: 0 auto; 
@@ -263,7 +264,7 @@
         
         /* Panel 顏色 (使用 var 設定為基礎色，在 .tab-label 中會被覆蓋為純色) */
         .edm { background-color: var(--color-edm); }
-        .list { background-color: var(--color-list); }
+        .list { color: var(--text-dark); background-color: var(--color-list); }
         .insta { background-color: var(--color-instagram); }
         .branch { background-color: var(--color-branch); }
         .monitor { background-color: var(--color-monitor); }
@@ -288,9 +289,9 @@
             z-index: 10; 
         }
         
-        /* 【最終修正】覆蓋每個 Tab Label 的背景色，使其與其 Panel 顏色一致，消除色差 */
+        /* 覆蓋每個 Tab Label 的背景色，使其與其 Panel 顏色一致，消除色差 */
         .edm .tab-label { background-color: var(--color-edm); }
-        .list .tab-label { background-color: var(--color-list); }
+        .list .tab-label { color: var(--text-dark); background-color: var(--color-list); }
         .insta .tab-label { background-color: var(--color-instagram); }
         .branch .tab-label { background-color: var(--color-branch); }
         .monitor .tab-label { background-color: var(--color-monitor); }
@@ -306,6 +307,7 @@
             position: relative; 
             z-index: 1; 
 
+            /* 內容超出時，允許在該區域內滾動 */
             overflow-y: auto; 
             -webkit-overflow-scrolling: touch;
 
@@ -319,11 +321,34 @@
             padding-right: 20px;
             padding-bottom: 20px; 
         }
+        
+        /* ------------------------------------------------------------------ */
+        /* 榜單頁面內容排版 CSS */
+        /* ------------------------------------------------------------------ */
+        .list .tab-content h2 {
+            margin-top: 0;
+            font-size: 1.8em;
+            color: var(--text-dark);
+        }
+        .list .tab-content a {
+            /* 修正：增加底線並改為藍色 */
+            color: #4a90e2; 
+            text-decoration: underline;
+            transition: color 0.3s ease;
+        }
+        .list .tab-content a:hover {
+            color: #357ae8; 
+        }
+        .list-link-group {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
         /* ------------------------------------------------------------------ */
-        /* EDM 頁面內容排版 CSS - 修復 EDM 左右佈局 */
+        /* EDM & INSTAGRAM 左右佈局通用 CSS */
         /* ------------------------------------------------------------------ */
-        .edm .tab-content {
+        .edm .tab-content, .insta .tab-content {
             display: flex; 
             padding: 0; 
             box-sizing: border-box; 
@@ -334,23 +359,28 @@
             width: calc(100% + 1px); 
         }
         
-        .edm-left {
+        /* 左側圖片區塊 (EDM & INSTA 共用樣式) */
+        .edm-left, .insta-left {
             flex: 0 0 50%; 
             height: 100%;
-            
-            /* 圖片適應性調整：貼合上下邊界並保持比例 */
-            background-image: url('鵬展教育中心.jpg'); 
             background-size: contain; 
             background-position: center;
             background-repeat: no-repeat; 
-            
-            /* 讓圖片在 contain 模式下居中顯示 */
             display: flex; 
             justify-content: center; 
             align-items: center;
         }
 
-        .edm-right {
+        /* 個別頁面圖片設定 */
+        .edm-left {
+            background-image: url('鵬展教育中心.jpg'); 
+        }
+        .insta-left {
+            background-image: url('IG頁面.jpg'); 
+        }
+        
+        /* 右側內容區塊 (EDM & INSTA 共用樣式) */
+        .edm-right, .insta-right {
             flex: 1; 
             height: 100%;
             display: flex;
@@ -366,12 +396,13 @@
             margin-top: 0;
         }
 
-        .edm-bottom-content {
+        /* 底部/連結內容區塊 (EDM & INSTA 共用樣式) */
+        .edm-bottom-content, .insta-bottom-content {
             text-align: center;
             padding-top: 20px;
         }
 
-        .edm-bottom-content p {
+        .edm-bottom-content p, .insta-bottom-content p {
             font-size: 1.2em;
             display: flex; 
             align-items: center; 
@@ -380,7 +411,7 @@
             margin-top: 0; 
         }
         
-        .edm-bottom-content img {
+        .edm-bottom-content img, .insta-bottom-content img {
             max-width: 100%;
             height: auto;
             display: block;
@@ -389,7 +420,7 @@
             cursor: pointer;
             transition: transform 0.3s ease;
         }
-        .edm-bottom-content img:hover {
+        .edm-bottom-content img:hover, .insta-bottom-content img:hover {
             transform: scale(1.02);
         }
 
@@ -403,8 +434,25 @@
             animation: blink 1.5s infinite ease-in-out;
             margin-left: 8px;
         }
+        
         /* ------------------------------------------------------------------ */
-
+        /* 監視系統頁面內容排版 CSS (確保圖片填滿寬度) */
+        /* ------------------------------------------------------------------ */
+        .monitor-ad a {
+            display: block; /* 讓連結佔滿整個容器 */
+            cursor: pointer;
+        }
+        .monitor-ad img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 4px; 
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: opacity 0.3s ease;
+        }
+        .monitor-ad img:hover {
+            opacity: 0.9;
+        }
 
         /* 其他網站內容樣式 (略) */
         .other-website-content {
@@ -470,22 +518,60 @@
                 
                 <section id="list" class="tab-panel list"> 
                     <div class="tab-label"><span>榜單</span></div> 
-                    <div class="tab-content"><h2>最新榜單公告</h2><p>這是榜單頁面的詳細內容。</p><div class="content-placeholder">榜單內容佔位圖</div><p>恭喜所有上榜的同學！</p><div class="content-placeholder">榜單內容佔位圖 2</div><div style="height: 500px;"></div><p>滾動測試區塊</p></div> 
+                    <div class="tab-content">
+                        <div class="list-link-group">
+                            <h2>
+                                <a href="https://photos.google.com/share/AF1QipNi7aFa1KfZe65AP5DB65MG-cOnRPnd1QjC_nYFIwilFCO_qmEMBkk4WIgoxEo6kA?key=WnAtN1FPbFNOLUlhN1lmTVFPZnZQT2lGUTJyTFhR" target="_blank">高中榜單</a>
+                            </h2>
+                            <h2>
+                                <a href="https://photos.google.com/share/AF1QipMhHnxtWwZ8ZYdB_DLAGwoE0pFp_zC9Oe56i4EpKzaWrbLxNiOqZzI44VujbNuxug?key=LW8xb1NGeXZhYjU5LWFhNGkxWEZkLU5DMm8yNDNR" target="_blank">國中榜單</a>
+                            </h2>
+                        </div>
+                        <div style="height: 500px;"></div>
+                        <p>持續更新中！</p>
+                    </div> 
                 </section> 
 
                 <section id="insta" class="tab-panel insta"> 
                     <div class="tab-label"><span>Instagram</span></div> 
-                    <div class="tab-content"><h2>Instagram 嵌入內容</h2><p>這是 Instagram 頁面的詳細內容。</p><div class="content-placeholder">Instagram feed 佔位圖</div><p>追蹤我們的 Instagram 獲取最新動態！</p><div style="height: 500px;"></div><p>滾動測試區塊</p></div> 
+                    
+                    <div class="tab-content">
+                        <div class="insta-left"></div> 
+                        
+                        <div class="insta-right">
+                            
+                            <div class="insta-header">
+                                <h2>追蹤我們的最新動態！</h2>
+                            </div>
+                            
+                            <div class="insta-bottom-content">
+                                <p>
+                                    我們的IG傳送門
+                                    <span class="arrow-blink">⬇️</span>
+                                </p>
+                                <a href="https://www.instagram.com/p.j_math/" target="_blank">
+                                    <img src="IG_logo.png" alt="Instagram 傳送門" title="點擊前往 Instagram">
+                                </a>
+                            </div>
+                            <p style="color: #ccc; font-size: 0.8em; margin-top: 40px;">（如果右側內容很多，這裡可以滾動）</p>
+                        </div>
+                    </div> 
                 </section> 
 
                 <section id="branch" class="tab-panel branch"> 
                     <div class="tab-label"><span>鵬展分校</span></div> 
-                    <div class="tab-content"><h2>分校資訊與地圖</h2><p>這是分校頁面的詳細內容。</p><div class="content-placeholder">分校地圖佔位圖</div><p>歡迎蒞臨我們的分校。</p><div style="height: 500px;"></div><p>滾動測試區塊</p></div> 
+                    <div class="tab-content"><h2>分校資訊與地圖</h2><p>這是分校頁面的詳細內容。（待定）</p><div class="content-placeholder">分校地圖佔位圖</div><p>歡迎蒞臨我們的分校。</p><div style="height: 500px;"></div><p>滾動測試區塊</p></div> 
                 </section> 
 
                 <section id="monitor" class="tab-panel monitor"> 
                     <div class="tab-label"><span>監視系統</span></div> 
-                    <div class="tab-content"><h2>監視系統登入入口</h2><p>這是監視系統頁面的詳細內容。</p><div class="content-placeholder">監視系統介面佔位圖</div><p>請輸入您的帳號密碼。</p><div style="height: 500px;"></div><p>滾動測試區塊</p></div> 
+                    <div class="tab-content">
+                        <div class="monitor-ad">
+                            <a href="監視系統EDM.jpg" target="_blank">
+                                <img src="監視系統EDM.jpg" alt="監視系統廣告" title="點擊在新分頁中查看大圖">
+                            </a>
+                        </div>
+                    </div> 
                 </section> 
 
             </div> 
